@@ -11,6 +11,8 @@ public class CoinMan extends ApplicationAdapter {
 	private Texture background;
 	private Texture [] man ;
 	private int slowMan ,manState;
+	private float gravity,velocity;
+	private float manY;
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
@@ -22,12 +24,19 @@ public class CoinMan extends ApplicationAdapter {
 		man[3] = new Texture("frame-4.png");
 		manState =0;
 		slowMan = 0;
+		gravity = 0.2f;
+		velocity = 0;
+		manY = Gdx.graphics.getHeight() / 2;
+
 	}
 
 	@Override
 	public void render () {
 		batch.begin();
 
+		if(Gdx.input.justTouched()){ // jump when touch
+			velocity = -10;
+		}
 		if(slowMan<8) {  // arbitrarily chosen number so that man's movement slows down
             slowMan++;
 		}else {
@@ -38,9 +47,14 @@ public class CoinMan extends ApplicationAdapter {
             }
             slowMan = 0;
         }
+		velocity += gravity;
+		manY -= velocity;
+		if(manY<=0){  // so that man doesn't goes too below (below the screen)
+		    manY=0;
+        }
 		batch.draw(background,0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
-		batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, Gdx.graphics.getHeight() / 2);
+		batch.draw(man[manState], Gdx.graphics.getWidth() / 2 - man[manState].getWidth() / 2, manY);
 
 
 		batch.end();
